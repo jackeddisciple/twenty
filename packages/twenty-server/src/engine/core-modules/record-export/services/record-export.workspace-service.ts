@@ -508,8 +508,8 @@ export class RecordExportWorkspaceService {
           ? { apiKeyId: authContext.apiKey.id }
           : { userWorkspaceId: authContext.userWorkspaceId }),
         applicationId: undefined,
-        agentRoleRestriction: isUserAuthContext(authContext)
-          ? authContext.agentRoleRestriction
+        agentId: isUserAuthContext(authContext)
+          ? authContext.agentId
           : undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
