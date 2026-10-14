@@ -114,12 +114,10 @@ export class McpProtocolService {
     requestId: string | number,
     {
       workspaceId,
-      roleId,
       rolePermissionConfig,
       isDirectMode,
     }: {
       workspaceId: string;
-      roleId: string;
       rolePermissionConfig: RolePermissionConfig;
       isDirectMode: boolean;
     },
@@ -127,7 +125,6 @@ export class McpProtocolService {
     const instructions =
       await this.mcpInstructionBuilderService.buildInstructions({
         workspaceId,
-        roleId,
         rolePermissionConfig,
         isDirectMode,
       });
@@ -158,7 +155,7 @@ export class McpProtocolService {
     apiKey?: FlatApiKey;
     application?: FlatApplication;
     agentId?: string;
-  }): Promise<{ roleId: string; rolePermissionConfig: RolePermissionConfig }> {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
     if (isDefined(apiKey)) {
       const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKey.id,
@@ -166,7 +163,6 @@ export class McpProtocolService {
       );
 
       return {
-        roleId: apiKeyRoleId,
         rolePermissionConfig: { intersectionOf: { apiKeyRoleId } },
       };
     }
@@ -185,7 +181,6 @@ export class McpProtocolService {
       }
 
       return {
-        roleId: application.defaultRoleId,
         rolePermissionConfig: {
           intersectionOf: {
             applicationRoleId: application.defaultRoleId,
@@ -208,7 +203,6 @@ export class McpProtocolService {
     });
 
     return {
-      roleId: userRoleId,
       rolePermissionConfig: {
         intersectionOf: {
           ...buildUserRoleIdsBySource({ userRoleId, application }),
@@ -285,7 +279,6 @@ export class McpProtocolService {
 
   private async buildMcpToolSet(
     workspace: FlatWorkspace,
-    roleId: string,
     rolePermissionConfig: RolePermissionConfig,
     options?: {
       authContext?: WorkspaceAuthContext;
@@ -303,7 +296,6 @@ export class McpProtocolService {
 
     const toolContext: ToolProviderContext = {
       workspaceId: workspace.id,
-      roleId,
       rolePermissionConfig,
       authContext: options?.authContext,
       application: options?.application,
@@ -320,7 +312,7 @@ export class McpProtocolService {
     const toolSet: ToolSet = {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
-        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
+        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, {
           rolePermissionConfig,
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
@@ -407,7 +399,7 @@ export class McpProtocolService {
       }
 
       if (method === 'initialize') {
-        const { roleId, rolePermissionConfig } = await this.resolveCallerRoles({
+        const { rolePermissionConfig } = await this.resolveCallerRoles({
           workspaceId: workspace.id,
           userWorkspaceId,
           apiKey,
@@ -417,7 +409,6 @@ export class McpProtocolService {
 
         return this.handleInitialize(id, {
           workspaceId: workspace.id,
-          roleId,
           rolePermissionConfig,
           isDirectMode,
         });
@@ -448,7 +439,7 @@ export class McpProtocolService {
         });
       }
 
-      const { roleId, rolePermissionConfig } = await this.resolveCallerRoles({
+      const { rolePermissionConfig } = await this.resolveCallerRoles({
         workspaceId: workspace.id,
         userWorkspaceId,
         apiKey,
@@ -459,7 +450,7 @@ export class McpProtocolService {
       const { toolSet, toolContext } = await Sentry.startSpan(
         { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
         () =>
-          this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
+          this.buildMcpToolSet(workspace, rolePermissionConfig, {
             authContext,
             application,
             userId,

@@ -94,7 +94,6 @@ const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
 
 const context: ToolProviderContext = {
   workspaceId,
-  roleId: callerRoleId,
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: callerRoleId },
   },
