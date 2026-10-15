@@ -77,17 +77,6 @@ type QuotaConsumeResult = {
   isDegraded: boolean;
 };
 
-const buildCounters = ({
-  quotaCounters,
-  workspaceAllowanceCounter,
-}: {
-  quotaCounters: (LimitQuotaCounter | UserAllowanceQuotaCounter)[];
-  workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
-}): QuotaCounter[] => [
-  ...quotaCounters,
-  ...(isDefined(workspaceAllowanceCounter) ? [workspaceAllowanceCounter] : []),
-];
-
 @Injectable()
 export class UsageLimitQuotaService {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
@@ -344,10 +333,12 @@ export class UsageLimitQuotaService {
         this.buildWorkspaceAllowanceCounterAdmittingOnFailure(args.workspaceId),
       ]);
 
-      const counters = buildCounters({
-        quotaCounters,
-        workspaceAllowanceCounter,
-      });
+      const counters: QuotaCounter[] = [
+        ...quotaCounters,
+        ...(isDefined(workspaceAllowanceCounter)
+          ? [workspaceAllowanceCounter]
+          : []),
+      ];
 
       const { consumedValues, isDegraded } = await this.consumeCounters({
         workspaceId: args.workspaceId,
@@ -407,10 +398,12 @@ export class UsageLimitQuotaService {
 
       const debits = buildQuotaDebits({
         // a warm cannot recreate a key whose period has ended, so it must not hold back the tagged keys
-        counters: buildCounters({
-          quotaCounters,
-          workspaceAllowanceCounter,
-        }).filter((counter) => counter.periodEnd.getTime() > Date.now()),
+        counters: [
+          ...quotaCounters,
+          ...(isDefined(workspaceAllowanceCounter)
+            ? [workspaceAllowanceCounter]
+            : []),
+        ].filter((counter) => counter.periodEnd.getTime() > Date.now()),
         events,
       });
 
