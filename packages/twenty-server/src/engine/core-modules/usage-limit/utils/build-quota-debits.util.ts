@@ -20,7 +20,7 @@ const ALLOWANCE_CONSUMPTION_SCOPE: QuotaConsumptionScope = {
 
 const findDebitSplit = (counter: QuotaCounter): QuotaDebit['split'] => {
   if (counter.kind === 'userAllowance') {
-    return { kind: 'user', limitValue: counter.limitValue };
+    return { kind: 'userCredits', limitValue: counter.limitValue };
   }
 
   return counter.kind === 'workspaceAllowance' ||

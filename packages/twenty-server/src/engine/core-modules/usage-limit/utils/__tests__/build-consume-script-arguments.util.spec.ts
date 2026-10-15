@@ -27,7 +27,7 @@ describe('buildConsumeScriptArguments', () => {
     (limitValue) => {
       expect(() =>
         buildConsumeScriptArguments([
-          { amount: 1, warm: null, split: { kind: 'user', limitValue } },
+          { amount: 1, warm: null, split: { kind: 'userCredits', limitValue } },
         ]),
       ).toThrow(/^User credits limit .* is not a non-negative safe integer$/);
     },
@@ -41,7 +41,7 @@ describe('buildConsumeScriptArguments', () => {
           {
             amount: 300,
             warm: { value: 900, ttl: 60_000 },
-            split: { kind: 'user', limitValue: 1_000 },
+            split: { kind: 'userCredits', limitValue: 1_000 },
           },
           { amount: 300, warm: null, split: { kind: 'workspaceCredits' } },
         ],
@@ -51,7 +51,7 @@ describe('buildConsumeScriptArguments', () => {
       '[5,300,300]',
       '[false,900,false]',
       '[false,60000,false]',
-      '[false,"user","workspaceCredits"]',
+      '[false,"userCredits","workspaceCredits"]',
       '[false,1000,false]',
       'true',
     ]);

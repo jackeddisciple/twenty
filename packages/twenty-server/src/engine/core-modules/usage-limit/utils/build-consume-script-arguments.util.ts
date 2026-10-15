@@ -34,7 +34,7 @@ export const buildConsumeScriptArguments = (
     }
 
     if (
-      split?.kind === 'user' &&
+      split?.kind === 'userCredits' &&
       !(Number.isSafeInteger(split.limitValue) && split.limitValue >= 0)
     ) {
       throw new Error(
@@ -50,7 +50,7 @@ export const buildConsumeScriptArguments = (
     JSON.stringify(entries.map(({ split }) => split?.kind ?? false)),
     JSON.stringify(
       entries.map(({ split }) =>
-        split?.kind === 'user' ? split.limitValue : false,
+        split?.kind === 'userCredits' ? split.limitValue : false,
       ),
     ),
     String(isUserCreditsFallbackEnabled),

@@ -893,7 +893,7 @@ export class UsageLimitQuotaService {
         await this.runWarmAndConsumeScript({
           counters: heldBackIndexes.map((index) => counters[index]),
           entries: heldBackIndexes.map((index) => ({
-            amount: splits[index]?.kind === 'user' ? 0 : amounts[index],
+            amount: splits[index]?.kind === 'userCredits' ? 0 : amounts[index],
             warm: null,
           })),
           userCreditsFallback: null,

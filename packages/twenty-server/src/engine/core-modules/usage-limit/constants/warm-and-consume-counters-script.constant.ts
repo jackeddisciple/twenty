@@ -24,7 +24,7 @@ for i = 1, #KEYS do
 
     if not consumed then
       isSplitCold = true
-    elseif splits[i] == 'user' then
+    elseif splits[i] == 'userCredits' then
       local share = amounts[i]
 
       if isUserCreditsFallbackEnabled then
@@ -43,7 +43,7 @@ end
 for i = 1, #KEYS do
   local amount = amounts[i]
 
-  if splits[i] == 'user' then
+  if splits[i] == 'userCredits' then
     amount = userShare
   elseif splits[i] == 'workspaceCredits' then
     amount = math.max(0, amounts[i] - (userShare or 0))

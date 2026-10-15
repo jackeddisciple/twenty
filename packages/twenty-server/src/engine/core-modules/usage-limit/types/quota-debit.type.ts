@@ -4,7 +4,7 @@ export type QuotaDebit = {
   counter: QuotaCounter;
   amount: number;
   split:
-    | { kind: 'user'; limitValue: number }
+    | { kind: 'userCredits'; limitValue: number }
     | { kind: 'workspaceCredits' }
     | null;
 };

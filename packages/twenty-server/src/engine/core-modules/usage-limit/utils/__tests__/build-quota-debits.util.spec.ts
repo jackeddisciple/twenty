@@ -123,7 +123,7 @@ describe('buildQuotaDebits', () => {
       {
         counter: userAllowanceCounter,
         amount: 500,
-        split: { kind: 'user', limitValue: 1_000 },
+        split: { kind: 'userCredits', limitValue: 1_000 },
       },
       {
         counter: workspaceCreditLimitCounter,
