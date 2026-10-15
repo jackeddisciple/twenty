@@ -25,7 +25,6 @@ export const fromRecordUsageInputToUsageConsumptionRow = ({
     workflowId: spenders?.workflowId ?? '',
     logicFunctionId: spenders?.logicFunctionId ?? '',
     creditsUsedMicro: validCreditsUsedMicro,
-    // debits charge the full cost; the consume script takes the user share out of it
     userCreditsUsedMicro: 0,
     workspaceCreditsUsedMicro: validCreditsUsedMicro,
     quantity,

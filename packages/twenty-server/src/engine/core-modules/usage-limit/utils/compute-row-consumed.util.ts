@@ -21,7 +21,6 @@ export const computeRowConsumed = ({
     return Number(row.userCreditsUsedMicro);
   }
 
-  // user credits do not draw on workspace-wide credit limits
   if (isWorkspaceCreditLimitCounter(scope)) {
     return Number(row.workspaceCreditsUsedMicro);
   }

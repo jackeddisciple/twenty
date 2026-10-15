@@ -47,7 +47,6 @@ export const buildQuotaDebits = ({
             rows: events
               .filter((event) => event.resourceType === counter.resourceType)
               .map(fromRecordUsageInputToUsageConsumptionRow),
-            // user credits are spent out of the credits each event costs
             scope:
               counter.kind === 'userAllowance'
                 ? { ...counter, unit: UsageUnit.CREDIT }

@@ -475,7 +475,6 @@ export class ChatExecutionService {
     let lastUnderlyingStreamError: unknown;
 
     const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
-      // only the charge that crosses a window both pays a user share and leaves it exhausted
       if (
         isDefined(debit.userAllowanceExhaustedUntil) &&
         debit.userCreditsUsedMicro > 0
@@ -516,7 +515,6 @@ export class ChatExecutionService {
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
-        // per-step rounding can make the summed user share exceed the turn total
         Math.min(turnUserCreditsUsedMicro, creditsUsedMicro),
       );
 
@@ -527,7 +525,6 @@ export class ChatExecutionService {
           userWorkspaceId,
         )
         .then(async (webSearchDebit) => {
-          // a turn stopped on user credits has already sent its notice
           if (isDefined(webSearchDebit) && stopReason !== 'userAllowance') {
             await notifyUserCreditsCrossing(webSearchDebit);
           }

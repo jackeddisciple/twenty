@@ -78,7 +78,6 @@ export const buildQuotaCounters = ({
           operationType,
         }) &&
         spenderTypes.has(quotaLimitDefault.spenderType) &&
-        // user credits at 0 mean none, not a window that is always used up
         !(
           quotaLimitDefault.unit === UsageUnit.USER_CREDIT &&
           quotaLimitDefault.limitValue === 0

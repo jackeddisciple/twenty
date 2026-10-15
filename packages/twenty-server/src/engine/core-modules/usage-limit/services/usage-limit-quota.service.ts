@@ -397,7 +397,6 @@ export class UsageLimitQuotaService {
       ]);
 
       const debits = buildQuotaDebits({
-        // a warm cannot recreate a key whose period has ended, so it must not hold back the tagged keys
         counters: [
           ...quotaCounters,
           ...(isDefined(workspaceAllowanceCounter)
@@ -869,7 +868,6 @@ export class UsageLimitQuotaService {
         `Usage quota warm degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
-      // a cold tagged key holds back the warm ones too, so debit them as the recorded row will read them, with no user share
       const heldBackIndexes = consumedValues.flatMap((consumedValue, index) =>
         !isDefined(consumedValue) && isDefined(splits[index]) ? [index] : [],
       );

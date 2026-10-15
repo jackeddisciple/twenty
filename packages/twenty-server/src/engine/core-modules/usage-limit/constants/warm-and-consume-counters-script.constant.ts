@@ -6,7 +6,6 @@ export const WARM_AND_CONSUME_COUNTERS_SCRIPT: CacheScript = {
 local amounts = cjson.decode(ARGV[1])
 local warmValues = cjson.decode(ARGV[2])
 local warmTtls = cjson.decode(ARGV[3])
--- stock counters run this script without splits
 local splits = cjson.decode(ARGV[4] or '[]')
 local userLimits = cjson.decode(ARGV[5] or '[]')
 local isUserCreditsFallbackEnabled = ARGV[6] == 'true'
