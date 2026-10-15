@@ -9,5 +9,6 @@ export type UsageConsumptionRow = {
   logicFunctionId: string;
   creditsUsedMicro: string | number;
   userCreditsUsedMicro: string | number;
+  workspaceCreditsUsedMicro: string | number;
   quantity: string | number;
 };

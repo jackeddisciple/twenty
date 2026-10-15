@@ -2,5 +2,8 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 
 export type UsageConsumptionTotals = Pick<
   UsageConsumptionRow,
-  'creditsUsedMicro' | 'userCreditsUsedMicro' | 'quantity'
+  | 'creditsUsedMicro'
+  | 'userCreditsUsedMicro'
+  | 'workspaceCreditsUsedMicro'
+  | 'quantity'
 >;

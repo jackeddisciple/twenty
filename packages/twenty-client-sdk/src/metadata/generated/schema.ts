@@ -3383,6 +3383,7 @@ export interface UsageBreakdownItem {
     key: Scalars['String']
     label?: Scalars['String']
     userCreditsUsed?: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
 
@@ -3465,6 +3466,7 @@ export type UsageResourceType = 'AI' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_FUNCTION
 export interface UsageTimeSeries {
     creditsUsed: Scalars['Float']
     date: Scalars['String']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageTimeSeries'
 }
 
@@ -7952,6 +7954,7 @@ export interface UsageBreakdownItemGenqlSelection{
     key?: boolean | number
     label?: boolean | number
     userCreditsUsed?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8040,6 +8043,7 @@ export interface UsageQuotaWithConsumptionGenqlSelection{
 export interface UsageTimeSeriesGenqlSelection{
     creditsUsed?: boolean | number
     date?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

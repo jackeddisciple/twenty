@@ -9,9 +9,11 @@ export const fromUsageBreakdownItemToUsageBreakdownItemDTO = ({
   label,
   creditsUsed,
   userCreditsUsed,
+  workspaceCreditsUsed,
 }: UsageBreakdownItem): UsageBreakdownItemDTO => ({
   key,
   label,
   creditsUsed: toDisplayCredits(creditsUsed),
   userCreditsUsed: toDisplayCredits(userCreditsUsed),
+  workspaceCreditsUsed: toDisplayCredits(workspaceCreditsUsed),
 });

@@ -26,6 +26,7 @@ import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
 type CreditsUsedAmounts = {
   creditsUsed: number;
   userCreditsUsed: number;
+  workspaceCreditsUsed: number;
 };
 
 export type UsageBreakdownItem = CreditsUsedAmounts & {
@@ -41,29 +42,34 @@ export type UsageApplicationBreakdownItem = CreditsUsedAmounts & {
 export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
+  workspaceCreditsUsed: number;
 };
 
 type CreditsUsedRowMicro = {
   creditsUsedMicro: string | number;
   userCreditsUsedMicro: string | number;
+  workspaceCreditsUsedMicro: string | number;
 };
 
 type BreakdownRowMicro<TColumn extends string> = Record<TColumn, string> &
   CreditsUsedRowMicro;
 
 const CREDITS_USED_SELECT = `sum(creditsUsedMicro) AS creditsUsedMicro,
-        sum(userCreditsUsedMicro) AS userCreditsUsedMicro`;
+        sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
+        sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro`;
 
 const toCreditsUsedAmounts = (
   row: CreditsUsedRowMicro,
 ): CreditsUsedAmounts => ({
   creditsUsed: Number(row.creditsUsedMicro),
   userCreditsUsed: Number(row.userCreditsUsedMicro),
+  workspaceCreditsUsed: Number(row.workspaceCreditsUsedMicro),
 });
 
 type TimeSeriesRowMicro = {
   date: string;
-  creditsUsedMicro: number;
+  creditsUsedMicro: string | number;
+  workspaceCreditsUsedMicro: string | number;
 };
 
 type PeriodParams = {
@@ -113,6 +119,7 @@ export class UsageAnalyticsService {
               agentId, workflowId, logicFunctionId,
               sum(creditsUsedMicro) AS creditsUsedMicro,
               sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
+              sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro,
               sum(quantity) AS quantity
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
@@ -161,6 +168,7 @@ export class UsageAnalyticsService {
       await this.clickHouseService.selectOrThrow<UsageConsumptionTotals>(
         `SELECT sum(creditsUsedMicro) AS creditsUsedMicro,
                 sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
+                sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro,
                 sum(quantity) AS quantity
          FROM usageEvent
          WHERE workspaceId = {workspaceId:String}
@@ -179,6 +187,7 @@ export class UsageAnalyticsService {
     return {
       creditsUsedMicro: rows[0]?.creditsUsedMicro ?? 0,
       userCreditsUsedMicro: rows[0]?.userCreditsUsedMicro ?? 0,
+      workspaceCreditsUsedMicro: rows[0]?.workspaceCreditsUsedMicro ?? 0,
       quantity: rows[0]?.quantity ?? 0,
     };
   }
@@ -194,9 +203,11 @@ export class UsageAnalyticsService {
     const rows = await this.clickHouseService.selectOrThrow<{
       totalCreditsUsedMicro: string | number | null;
       userCreditsUsedMicro: string | number | null;
+      workspaceCreditsUsedMicro: string | number | null;
     }>(
       `SELECT sum(creditsUsedMicro) AS totalCreditsUsedMicro,
-              sum(userCreditsUsedMicro) AS userCreditsUsedMicro
+              sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
+              sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND periodStart = {periodStart:DateTime64(3)}
@@ -204,12 +215,11 @@ export class UsageAnalyticsService {
       { workspaceId, periodStart: formatDateTimeForClickHouse(periodStart) },
     );
 
-    const totalCreditsUsedMicro = Number(rows[0]?.totalCreditsUsedMicro ?? 0);
-    const userCreditsUsedMicro = Number(rows[0]?.userCreditsUsedMicro ?? 0);
-
     return {
-      workspaceCreditsUsedMicro: totalCreditsUsedMicro - userCreditsUsedMicro,
-      userCreditsUsedMicro,
+      workspaceCreditsUsedMicro: Number(
+        rows[0]?.workspaceCreditsUsedMicro ?? 0,
+      ),
+      userCreditsUsedMicro: Number(rows[0]?.userCreditsUsedMicro ?? 0),
     };
   }
 
@@ -248,6 +258,7 @@ export class UsageAnalyticsService {
       key: row.key,
       creditsUsed: convert(Number(row.creditsUsedMicro)),
       userCreditsUsed: convert(Number(row.userCreditsUsedMicro)),
+      workspaceCreditsUsed: convert(Number(row.workspaceCreditsUsedMicro)),
     }));
   }
 
@@ -328,7 +339,7 @@ export class UsageAnalyticsService {
         ${hasOperationTypes ? 'AND operationType IN ({operationTypes:Array(String)})' : ''}
         ${isNonEmptyString(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
       GROUP BY resourceId, operation
-      ORDER BY creditsUsedMicro DESC
+      ORDER BY workspaceCreditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
@@ -442,7 +453,7 @@ export class UsageAnalyticsService {
         ${opTypeFilter}
         ${extraWhere}
       GROUP BY ${groupByField}
-      ORDER BY creditsUsedMicro DESC
+      ORDER BY workspaceCreditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
@@ -484,7 +495,8 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
-        sum(creditsUsedMicro) AS creditsUsedMicro
+        sum(creditsUsedMicro) AS creditsUsedMicro,
+        sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
@@ -510,7 +522,8 @@ export class UsageAnalyticsService {
 
     const points = rows.map((row) => ({
       date: row.date,
-      creditsUsed: row.creditsUsedMicro,
+      creditsUsed: Number(row.creditsUsedMicro),
+      workspaceCreditsUsed: Number(row.workspaceCreditsUsedMicro),
     }));
 
     return fillUsageTimeSeriesGaps({

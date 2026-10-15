@@ -1061,6 +1061,7 @@ export type UsageBreakdownItem = {
   key: Scalars['String']['output'];
   label?: Maybe<Scalars['String']['output']>;
   userCreditsUsed?: Maybe<Scalars['Float']['output']>;
+  workspaceCreditsUsed: Scalars['Float']['output'];
 };
 
 export enum UsageOperationType {

@@ -7,20 +7,28 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildRow = (
   overrides: Partial<UsageConsumptionRow>,
-): UsageConsumptionRow => ({
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
-  unit: UsageUnit.TOKEN,
-  userWorkspaceId: 'user-1',
-  apiKeyId: '',
-  applicationId: '',
-  agentId: '',
-  workflowId: '',
-  logicFunctionId: '',
-  creditsUsedMicro: '100',
-  userCreditsUsedMicro: '0',
-  quantity: '10',
-  ...overrides,
-});
+): UsageConsumptionRow => {
+  const creditsUsedMicro = overrides.creditsUsedMicro ?? '100';
+  const userCreditsUsedMicro = overrides.userCreditsUsedMicro ?? '0';
+
+  return {
+    operationType: UsageOperationType.AI_CHAT_TOKEN,
+    unit: UsageUnit.TOKEN,
+    userWorkspaceId: 'user-1',
+    apiKeyId: '',
+    applicationId: '',
+    agentId: '',
+    workflowId: '',
+    logicFunctionId: '',
+    creditsUsedMicro,
+    userCreditsUsedMicro,
+    workspaceCreditsUsedMicro: String(
+      Number(creditsUsedMicro) - Number(userCreditsUsedMicro),
+    ),
+    quantity: '10',
+    ...overrides,
+  };
+};
 
 const buildCounter = (
   overrides: Partial<LimitQuotaCounter>,

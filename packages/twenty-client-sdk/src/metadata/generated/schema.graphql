@@ -5294,6 +5294,7 @@ type UsageBreakdownItem {
   key: String!
   label: String
   userCreditsUsed: Float
+  workspaceCreditsUsed: Float!
 }
 
 type UsageLimit {
@@ -5402,6 +5403,7 @@ enum UsageResourceType {
 type UsageTimeSeries {
   creditsUsed: Float!
   date: String!
+  workspaceCreditsUsed: Float!
 }
 
 enum UsageUnit {

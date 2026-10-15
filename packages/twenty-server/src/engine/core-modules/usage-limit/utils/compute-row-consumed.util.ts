@@ -9,7 +9,11 @@ export const computeRowConsumed = ({
 }: {
   row: Pick<
     UsageConsumptionRow,
-    'unit' | 'creditsUsedMicro' | 'userCreditsUsedMicro' | 'quantity'
+    | 'unit'
+    | 'creditsUsedMicro'
+    | 'userCreditsUsedMicro'
+    | 'workspaceCreditsUsedMicro'
+    | 'quantity'
   >;
   scope: Pick<LimitQuotaCounter, 'spenderType' | 'unit'>;
 }): number => {
@@ -19,7 +23,7 @@ export const computeRowConsumed = ({
 
   // user credits do not draw on workspace-wide credit limits
   if (isWorkspaceCreditLimitCounter(scope)) {
-    return Number(row.creditsUsedMicro) - Number(row.userCreditsUsedMicro);
+    return Number(row.workspaceCreditsUsedMicro);
   }
 
   if (scope.unit === UsageUnit.CREDIT) {

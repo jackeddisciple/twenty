@@ -137,6 +137,7 @@ export class UsageResolver {
       timeSeries: timeSeries.map((point) => ({
         ...point,
         creditsUsed: toDisplayCredits(point.creditsUsed),
+        workspaceCreditsUsed: toDisplayCredits(point.workspaceCreditsUsed),
       })),
       periodStart,
       periodEnd,
@@ -160,6 +161,7 @@ export class UsageResolver {
           dailyUsage: dailyUsage.map((point) => ({
             ...point,
             creditsUsed: toDisplayCredits(point.creditsUsed),
+            workspaceCreditsUsed: toDisplayCredits(point.workspaceCreditsUsed),
           })),
         };
       }

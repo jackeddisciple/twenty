@@ -33,6 +33,7 @@ describe('fromRecordUsageInputToUsageConsumptionRow', () => {
       logicFunctionId: '',
       creditsUsedMicro: 100,
       userCreditsUsedMicro: 0,
+      workspaceCreditsUsedMicro: 100,
       quantity: 1,
     });
   });
@@ -45,7 +46,7 @@ describe('fromRecordUsageInputToUsageConsumptionRow', () => {
       fromRecordUsageInputToUsageConsumptionRow({
         ...workflowEvent,
         creditsUsedMicro,
-      }).creditsUsedMicro,
-    ).toBe(0);
+      }),
+    ).toMatchObject({ creditsUsedMicro: 0, workspaceCreditsUsedMicro: 0 });
   });
 });

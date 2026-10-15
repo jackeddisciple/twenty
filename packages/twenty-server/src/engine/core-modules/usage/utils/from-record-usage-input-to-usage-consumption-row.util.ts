@@ -10,19 +10,24 @@ export const fromRecordUsageInputToUsageConsumptionRow = ({
   spenders,
   creditsUsedMicro = 0,
   quantity,
-}: RecordUsageInput): UsageConsumptionRow => ({
-  operationType,
-  unit,
-  userWorkspaceId: spenders?.userWorkspaceId ?? '',
-  apiKeyId: spenders?.apiKeyId ?? '',
-  applicationId: spenders?.applicationId ?? '',
-  agentId: spenders?.agentId ?? '',
-  workflowId: spenders?.workflowId ?? '',
-  logicFunctionId: spenders?.logicFunctionId ?? '',
-  creditsUsedMicro: isValidCreditAmountMicro(creditsUsedMicro)
+}: RecordUsageInput): UsageConsumptionRow => {
+  const validCreditsUsedMicro = isValidCreditAmountMicro(creditsUsedMicro)
     ? creditsUsedMicro
-    : 0,
-  // debits charge the full cost; the consume script takes the user share out of it
-  userCreditsUsedMicro: 0,
-  quantity,
-});
+    : 0;
+
+  return {
+    operationType,
+    unit,
+    userWorkspaceId: spenders?.userWorkspaceId ?? '',
+    apiKeyId: spenders?.apiKeyId ?? '',
+    applicationId: spenders?.applicationId ?? '',
+    agentId: spenders?.agentId ?? '',
+    workflowId: spenders?.workflowId ?? '',
+    logicFunctionId: spenders?.logicFunctionId ?? '',
+    creditsUsedMicro: validCreditsUsedMicro,
+    // debits charge the full cost; the consume script takes the user share out of it
+    userCreditsUsedMicro: 0,
+    workspaceCreditsUsedMicro: validCreditsUsedMicro,
+    quantity,
+  };
+};

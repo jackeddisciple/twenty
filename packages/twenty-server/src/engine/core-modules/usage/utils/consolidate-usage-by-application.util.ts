@@ -41,8 +41,13 @@ export const consolidateUsageByApplication = ({
       creditsUsed: (consolidatedItem?.creditsUsed ?? 0) + item.creditsUsed,
       userCreditsUsed:
         (consolidatedItem?.userCreditsUsed ?? 0) + item.userCreditsUsed,
+      workspaceCreditsUsed:
+        (consolidatedItem?.workspaceCreditsUsed ?? 0) +
+        item.workspaceCreditsUsed,
     });
   }
 
-  return [...itemsByKey.values()].sort((a, b) => b.creditsUsed - a.creditsUsed);
+  return [...itemsByKey.values()].sort(
+    (a, b) => b.workspaceCreditsUsed - a.workspaceCreditsUsed,
+  );
 };

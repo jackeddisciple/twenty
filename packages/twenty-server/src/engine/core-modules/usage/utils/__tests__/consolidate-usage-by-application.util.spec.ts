@@ -23,12 +23,14 @@ describe('consolidateUsageByApplication', () => {
           operation: 'recordMeeting',
           creditsUsed: 500,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 500,
         },
         {
           applicationId: 'app-1',
           operation: 'summarizeMeeting',
           creditsUsed: 300,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 300,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -57,12 +59,14 @@ describe('consolidateUsageByApplication', () => {
         label: 'Call Recorder · Meeting recording',
         creditsUsed: 500,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 500,
       },
       {
         key: 'Call Recorder · Meeting summary',
         label: 'Call Recorder · Meeting summary',
         creditsUsed: 300,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 300,
       },
     ]);
   });
@@ -75,12 +79,14 @@ describe('consolidateUsageByApplication', () => {
           operation: 'seat',
           creditsUsed: 50,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 50,
         },
         {
           applicationId: 'app-1',
           operation: 'platformFee',
           creditsUsed: 20,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 20,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -112,12 +118,14 @@ describe('consolidateUsageByApplication', () => {
         label: 'Call Recorder · Per member',
         creditsUsed: 50,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 50,
       },
       {
         key: 'Call Recorder · Platform fee',
         label: 'Call Recorder · Platform fee',
         creditsUsed: 20,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 20,
       },
     ]);
   });
@@ -130,18 +138,21 @@ describe('consolidateUsageByApplication', () => {
           operation: 'pdl/person',
           creditsUsed: 100,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 100,
         },
         {
           applicationId: 'app-1',
           operation: 'pdl/company',
           creditsUsed: 70,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 70,
         },
         {
           applicationId: 'app-1',
           operation: '',
           creditsUsed: 40,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 40,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -155,6 +166,7 @@ describe('consolidateUsageByApplication', () => {
         label: 'People Data Labs',
         creditsUsed: 210,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 210,
       },
     ]);
   });
@@ -167,6 +179,7 @@ describe('consolidateUsageByApplication', () => {
           operation: '',
           creditsUsed: 120,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 120,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -185,6 +198,7 @@ describe('consolidateUsageByApplication', () => {
         label: 'Retired App',
         creditsUsed: 120,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 120,
       },
     ]);
   });
@@ -197,6 +211,7 @@ describe('consolidateUsageByApplication', () => {
           operation: '',
           creditsUsed: 90,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 90,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([]),
@@ -208,6 +223,7 @@ describe('consolidateUsageByApplication', () => {
         label: 'app-gone',
         creditsUsed: 90,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 90,
       },
     ]);
   });
@@ -220,12 +236,14 @@ describe('consolidateUsageByApplication', () => {
           operation: '',
           creditsUsed: 60,
           userCreditsUsed: 20,
+          workspaceCreditsUsed: 40,
         },
         {
           applicationId: 'app-2',
           operation: '',
           creditsUsed: 25,
           userCreditsUsed: 5,
+          workspaceCreditsUsed: 20,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -240,6 +258,7 @@ describe('consolidateUsageByApplication', () => {
         label: 'Enricher',
         creditsUsed: 85,
         userCreditsUsed: 25,
+        workspaceCreditsUsed: 60,
       },
     ]);
   });
@@ -252,18 +271,21 @@ describe('consolidateUsageByApplication', () => {
           operation: '',
           creditsUsed: 10,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 10,
         },
         {
           applicationId: 'app-2',
           operation: '',
           creditsUsed: 400,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 400,
         },
         {
           applicationId: 'app-1',
           operation: 'undeclared',
           creditsUsed: 50,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 50,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -278,13 +300,45 @@ describe('consolidateUsageByApplication', () => {
         label: 'Large',
         creditsUsed: 400,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 400,
       },
       {
         key: 'Small',
         label: 'Small',
         creditsUsed: 60,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 60,
       },
+    ]);
+  });
+
+  it('should order slices by workspace credits, not by total credits', () => {
+    const result = consolidateUsageByApplication({
+      items: [
+        {
+          applicationId: 'app-1',
+          operation: '',
+          creditsUsed: 100,
+          userCreditsUsed: 90,
+          workspaceCreditsUsed: 10,
+        },
+        {
+          applicationId: 'app-2',
+          operation: '',
+          creditsUsed: 50,
+          userCreditsUsed: 0,
+          workspaceCreditsUsed: 50,
+        },
+      ],
+      flatApplicationMaps: buildFlatApplicationMaps([
+        { id: 'app-1', name: 'Mostly user credits', billing: {} },
+        { id: 'app-2', name: 'Workspace credits', billing: {} },
+      ]),
+    });
+
+    expect(result.map((item) => item.key)).toEqual([
+      'Workspace credits',
+      'Mostly user credits',
     ]);
   });
 
@@ -297,6 +351,7 @@ describe('consolidateUsageByApplication', () => {
           operation: 'recordMeeting',
           creditsUsed: 75,
           userCreditsUsed: 0,
+          workspaceCreditsUsed: 75,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -310,6 +365,7 @@ describe('consolidateUsageByApplication', () => {
         label: 'Call Recorder',
         creditsUsed: 75,
         userCreditsUsed: 0,
+        workspaceCreditsUsed: 75,
       },
     ]);
   });

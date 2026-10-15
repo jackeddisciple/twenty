@@ -13728,6 +13728,9 @@ export default {
             "userCreditsUsed": [
                 11
             ],
+            "workspaceCreditsUsed": [
+                11
+            ],
             "__typename": [
                 1
             ]
@@ -13930,6 +13933,9 @@ export default {
             ],
             "date": [
                 1
+            ],
+            "workspaceCreditsUsed": [
+                11
             ],
             "__typename": [
                 1
