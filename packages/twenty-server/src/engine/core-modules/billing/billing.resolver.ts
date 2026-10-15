@@ -527,9 +527,13 @@ export class BillingResolver {
       ...item,
       workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsed),
       userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
-      grantedCredits: toDisplayCredits(item.grantedCredits),
-      rolloverCredits: toDisplayCredits(item.rolloverCredits),
-      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      workspaceCreditsGranted: toDisplayCredits(item.workspaceCreditsGranted),
+      workspaceCreditsRolledOver: toDisplayCredits(
+        item.workspaceCreditsRolledOver,
+      ),
+      workspaceCreditsTotalGranted: toDisplayCredits(
+        item.workspaceCreditsTotalGranted,
+      ),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }

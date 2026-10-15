@@ -1872,9 +1872,6 @@ export default {
             ]
         },
         "BillingResourceCreditUsage": {
-            "grantedCredits": [
-                11
-            ],
             "periodEnd": [
                 187
             ],
@@ -1884,16 +1881,19 @@ export default {
             "productKey": [
                 96
             ],
-            "rolloverCredits": [
-                11
-            ],
-            "totalGrantedCredits": [
-                11
-            ],
             "unitPriceCents": [
                 11
             ],
             "userCreditsUsed": [
+                11
+            ],
+            "workspaceCreditsGranted": [
+                11
+            ],
+            "workspaceCreditsRolledOver": [
+                11
+            ],
+            "workspaceCreditsTotalGranted": [
                 11
             ],
             "workspaceCreditsUsed": [

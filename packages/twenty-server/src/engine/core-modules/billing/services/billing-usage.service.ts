@@ -122,7 +122,7 @@ export class BillingUsageService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
-    const [creditsUsed, rolloverCredits] = await Promise.all([
+    const [creditsUsed, workspaceCreditsRolledOver] = await Promise.all([
       // Fails open: an unreadable usage total must never block a paying workspace
       this.usageAnalyticsService
         .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
@@ -137,7 +137,7 @@ export class BillingUsageService {
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
-    const grantedCredits =
+    const workspaceCreditsGranted =
       subscription.status === SubscriptionStatus.Trialing
         ? item.freeTrialQuantity
         : item.creditAmount;
@@ -148,9 +148,10 @@ export class BillingUsageService {
       periodEnd,
       workspaceCreditsUsed: creditsUsed.workspaceCreditsUsedMicro,
       userCreditsUsed: creditsUsed.userCreditsUsedMicro,
-      grantedCredits,
-      rolloverCredits,
-      totalGrantedCredits: grantedCredits + rolloverCredits,
+      workspaceCreditsGranted,
+      workspaceCreditsRolledOver,
+      workspaceCreditsTotalGranted:
+        workspaceCreditsGranted + workspaceCreditsRolledOver,
       unitPriceCents: item.unitPriceCents,
     };
   }

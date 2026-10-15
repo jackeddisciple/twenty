@@ -21,10 +21,10 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
         periodStart
         periodEnd
         workspaceCreditsUsed
-        grantedCredits
-        rolloverCredits
-        totalGrantedCredits
-        remainingCredits
+        workspaceCreditsGranted
+        workspaceCreditsRolledOver
+        workspaceCreditsTotalGranted
+        workspaceCreditsRemaining
       }
       subscription {
         stripeSubscriptionId

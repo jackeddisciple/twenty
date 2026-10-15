@@ -275,18 +275,25 @@ export class AdminPanelBillingService {
       }
 
       const workspaceCreditsUsed = toDisplayCredits(usage.workspaceCreditsUsed);
-      const grantedCredits = toDisplayCredits(usage.grantedCredits);
-      const rolloverCredits = toDisplayCredits(usage.rolloverCredits);
-      const totalGrantedCredits = toDisplayCredits(usage.totalGrantedCredits);
+      const workspaceCreditsGranted = toDisplayCredits(
+        usage.workspaceCreditsGranted,
+      );
+      const workspaceCreditsRolledOver = toDisplayCredits(
+        usage.workspaceCreditsRolledOver,
+      );
+      const workspaceCreditsTotalGranted = toDisplayCredits(
+        usage.workspaceCreditsTotalGranted,
+      );
 
       return {
         periodStart: usage.periodStart,
         periodEnd: usage.periodEnd,
         workspaceCreditsUsed,
-        grantedCredits,
-        rolloverCredits,
-        totalGrantedCredits,
-        remainingCredits: totalGrantedCredits - workspaceCreditsUsed,
+        workspaceCreditsGranted,
+        workspaceCreditsRolledOver,
+        workspaceCreditsTotalGranted,
+        workspaceCreditsRemaining:
+          workspaceCreditsTotalGranted - workspaceCreditsUsed,
         userCreditsUsed: toDisplayCredits(usage.userCreditsUsed),
       };
     } catch (error) {

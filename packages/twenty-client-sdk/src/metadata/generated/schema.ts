@@ -762,14 +762,14 @@ export interface BillingProductMetadata {
 }
 
 export interface BillingResourceCreditUsage {
-    grantedCredits: Scalars['Float']
     periodEnd: Scalars['DateTime']
     periodStart: Scalars['DateTime']
     productKey: BillingProductKey
-    rolloverCredits: Scalars['Float']
-    totalGrantedCredits: Scalars['Float']
     unitPriceCents: Scalars['Float']
     userCreditsUsed: Scalars['Float']
+    workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsRolledOver: Scalars['Float']
+    workspaceCreditsTotalGranted: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
 }
@@ -4753,14 +4753,14 @@ export interface BillingProductMetadataGenqlSelection{
 }
 
 export interface BillingResourceCreditUsageGenqlSelection{
-    grantedCredits?: boolean | number
     periodEnd?: boolean | number
     periodStart?: boolean | number
     productKey?: boolean | number
-    rolloverCredits?: boolean | number
-    totalGrantedCredits?: boolean | number
     unitPriceCents?: boolean | number
     userCreditsUsed?: boolean | number
+    workspaceCreditsGranted?: boolean | number
+    workspaceCreditsRolledOver?: boolean | number
+    workspaceCreditsTotalGranted?: boolean | number
     workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

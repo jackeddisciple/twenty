@@ -162,15 +162,15 @@ export const SettingsBillingCreditsSection = ({
 
   const {
     workspaceCreditsUsed,
-    grantedCredits,
-    totalGrantedCredits,
-    rolloverCredits,
+    workspaceCreditsGranted,
+    workspaceCreditsTotalGranted,
+    workspaceCreditsRolledOver,
   } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const displayedGrantedCredits = packageCredits ?? workspaceCreditsGranted;
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -178,8 +178,9 @@ export const SettingsBillingCreditsSection = ({
     packageCredits !== nextCreditsByPeriod;
 
   const remainingCreditsPercentage =
-    totalGrantedCredits > 0
-      ? ((totalGrantedCredits - workspaceCreditsUsed) / totalGrantedCredits) *
+    workspaceCreditsTotalGranted > 0
+      ? ((workspaceCreditsTotalGranted - workspaceCreditsUsed) /
+          workspaceCreditsTotalGranted) *
         100
       : 0;
   const clampedRemainingCreditsPercentage = Math.min(
@@ -187,8 +188,8 @@ export const SettingsBillingCreditsSection = ({
     Math.max(0, remainingCreditsPercentage),
   );
 
-  // rolloverCredits sums every active grant, not just the rolled-over ones
-  const extraCredits = rolloverCredits;
+  // workspaceCreditsRolledOver sums every active grant, not just the rolled-over ones
+  const extraCredits = workspaceCreditsRolledOver;
   const hasExtraCredits = extraCredits > 0;
 
   const workspaceCreditsUsedDisplay = formatNumber(workspaceCreditsUsed, {
@@ -197,9 +198,12 @@ export const SettingsBillingCreditsSection = ({
   const grantedCreditsDisplay = formatNumber(displayedGrantedCredits, {
     decimals: 2,
   });
-  const totalGrantedCreditsDisplay = formatNumber(totalGrantedCredits, {
-    decimals: 2,
-  });
+  const workspaceCreditsTotalGrantedDisplay = formatNumber(
+    workspaceCreditsTotalGranted,
+    {
+      decimals: 2,
+    },
+  );
   const extraCreditsDisplay = formatNumber(extraCredits, {
     decimals: 2,
   });
@@ -270,14 +274,14 @@ export const SettingsBillingCreditsSection = ({
             {isTrialing ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available during the trial period`}
               </StyledRolloverText>
             ) : hasExtraCredits ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available (including ${extraCreditsDisplay} on top of your plan)`}
               </StyledRolloverText>

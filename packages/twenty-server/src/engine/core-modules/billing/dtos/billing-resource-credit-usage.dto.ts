@@ -20,13 +20,13 @@ export class BillingResourceCreditUsageDTO {
   userCreditsUsed: number;
 
   @Field(() => Float)
-  grantedCredits: number;
+  workspaceCreditsGranted: number;
 
   @Field(() => Float)
-  rolloverCredits: number;
+  workspaceCreditsRolledOver: number;
 
   @Field(() => Float)
-  totalGrantedCredits: number;
+  workspaceCreditsTotalGranted: number;
 
   @Field(() => Float)
   unitPriceCents: number;

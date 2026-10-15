@@ -859,14 +859,14 @@ type BillingProductMetadata {
 }
 
 type BillingResourceCreditUsage {
-  grantedCredits: Float!
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
   unitPriceCents: Float!
   userCreditsUsed: Float!
+  workspaceCreditsGranted: Float!
+  workspaceCreditsRolledOver: Float!
+  workspaceCreditsTotalGranted: Float!
   workspaceCreditsUsed: Float!
 }
 

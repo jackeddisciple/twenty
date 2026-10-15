@@ -5,9 +5,9 @@ export const GET_RESOURCE_CREDIT_USAGE = gql`
     getResourceCreditUsage {
       productKey
       workspaceCreditsUsed
-      grantedCredits
-      rolloverCredits
-      totalGrantedCredits
+      workspaceCreditsGranted
+      workspaceCreditsRolledOver
+      workspaceCreditsTotalGranted
       unitPriceCents
     }
   }
