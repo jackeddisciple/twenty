@@ -19,7 +19,7 @@ export const filterExhaustedCountersByPayer = ({
   counters: QuotaCounter[];
   consumedValues: (number | null)[];
   exhaustedCounters: QuotaCounter[];
-  userCreditsFallback: UserCreditsFallback | null;
+  userCreditsFallback: UserCreditsFallback;
 }): QuotaCounter[] => {
   const isStopMode = userCreditsFallback === UserCreditsFallback.STOP;
   const userAllowanceIndexes = counters.flatMap((counter, index) =>

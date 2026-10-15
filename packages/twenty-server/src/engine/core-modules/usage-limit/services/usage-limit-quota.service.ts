@@ -80,17 +80,11 @@ type QuotaConsumeResult = {
 const buildCounters = ({
   quotaCounters,
   workspaceAllowanceCounter,
-  userCreditsFallback,
 }: {
   quotaCounters: (LimitQuotaCounter | UserAllowanceQuotaCounter)[];
   workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
-  userCreditsFallback: UserCreditsFallback | null;
 }): QuotaCounter[] => [
-  // the fallback decides who pays, so user windows cannot be used without it
-  ...quotaCounters.filter(
-    (counter) =>
-      counter.kind !== 'userAllowance' || isDefined(userCreditsFallback),
-  ),
+  ...quotaCounters,
   ...(isDefined(workspaceAllowanceCounter) ? [workspaceAllowanceCounter] : []),
 ];
 
@@ -353,7 +347,6 @@ export class UsageLimitQuotaService {
       const counters = buildCounters({
         quotaCounters,
         workspaceAllowanceCounter,
-        userCreditsFallback,
       });
 
       const { consumedValues, isDegraded } = await this.consumeCounters({
@@ -417,7 +410,6 @@ export class UsageLimitQuotaService {
         counters: buildCounters({
           quotaCounters,
           workspaceAllowanceCounter,
-          userCreditsFallback,
         }).filter((counter) => counter.periodEnd.getTime() > Date.now()),
         events,
       });
@@ -689,7 +681,7 @@ export class UsageLimitQuotaService {
     workspaceId: string,
   ): Promise<{
     workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
-    userCreditsFallback: UserCreditsFallback | null;
+    userCreditsFallback: UserCreditsFallback;
     isWorkspaceAllowanceSkipped: boolean;
   }> {
     try {
@@ -717,7 +709,7 @@ export class UsageLimitQuotaService {
 
       return {
         workspaceAllowanceCounter: null,
-        userCreditsFallback: null,
+        userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
         isWorkspaceAllowanceSkipped: true,
       };
     }
@@ -808,13 +800,13 @@ export class UsageLimitQuotaService {
     counters,
     amounts,
     splits = counters.map(() => null),
-    userCreditsFallback = null,
+    userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
   }: {
     workspaceId: string;
     counters: QuotaCounter[];
     amounts: number[];
     splits?: QuotaDebit['split'][];
-    userCreditsFallback?: UserCreditsFallback | null;
+    userCreditsFallback?: UserCreditsFallback;
   }): Promise<QuotaConsumeResult & { userCreditsUsedMicro: number }> {
     const { consumedValues, userShare } = await this.runWarmAndConsumeScript({
       counters,
@@ -896,7 +888,7 @@ export class UsageLimitQuotaService {
             amount: splits[index]?.kind === 'userCredits' ? 0 : amounts[index],
             warm: null,
           })),
-          userCreditsFallback: null,
+          userCreditsFallback,
         });
 
       heldBackIndexes.forEach((index, position) => {
@@ -918,7 +910,7 @@ export class UsageLimitQuotaService {
   }: {
     counters: QuotaCounter[];
     entries: Parameters<typeof buildConsumeScriptArguments>[0];
-    userCreditsFallback: UserCreditsFallback | null;
+    userCreditsFallback: UserCreditsFallback;
   }): Promise<{ consumedValues: (number | null)[]; userShare: number | null }> {
     if (counters.length === 0) {
       return { consumedValues: [], userShare: null };
