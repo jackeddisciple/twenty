@@ -2,7 +2,7 @@ import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billi
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
-import { filterExhaustedCountersByPayer } from 'src/engine/core-modules/usage-limit/utils/filter-exhausted-counters-by-payer.util';
+import { findBlockingCounters } from 'src/engine/core-modules/usage-limit/utils/find-blocking-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -64,7 +64,7 @@ const allExhausted = [
   workspaceAllowance,
 ];
 
-describe('filterExhaustedCountersByPayer', () => {
+describe('findBlockingCounters', () => {
   it.each<{
     title: string;
     userAllowanceConsumedValues: (number | null)[];
@@ -80,7 +80,7 @@ describe('filterExhaustedCountersByPayer', () => {
       expected: [workspaceAllowance, userCreditLimit, workspaceCreditLimit],
     },
     {
-      title: 'while the user pays in spill mode',
+      title: 'while spending user credits in spill mode',
       userAllowanceConsumedValues: [0, 0],
       userCreditsFallback: WORKSPACE_CREDITS,
       exhaustedCounters: allExhausted,
@@ -94,7 +94,7 @@ describe('filterExhaustedCountersByPayer', () => {
       expected: [workspaceAllowance, userCreditLimit, workspaceCreditLimit],
     },
     {
-      title: 'while the user pays in STOP mode',
+      title: 'while spending user credits in STOP mode',
       userAllowanceConsumedValues: [0, 0],
       userCreditsFallback: STOP,
       exhaustedCounters: allExhausted,
@@ -130,7 +130,7 @@ describe('filterExhaustedCountersByPayer', () => {
       expected,
     }) => {
       expect(
-        filterExhaustedCountersByPayer({
+        findBlockingCounters({
           counters: [
             ...allExhausted,
             ...[weekUserAllowance, dayUserAllowance].slice(

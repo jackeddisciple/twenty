@@ -40,7 +40,7 @@ import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/ut
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
-import { filterExhaustedCountersByPayer } from 'src/engine/core-modules/usage-limit/utils/filter-exhausted-counters-by-payer.util';
+import { findBlockingCounters } from 'src/engine/core-modules/usage-limit/utils/find-blocking-counters.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -350,7 +350,7 @@ export class UsageLimitQuotaService {
         this.countAdmitOnFailure(enforcement);
       }
 
-      return filterExhaustedCountersByPayer({
+      return findBlockingCounters({
         counters,
         consumedValues,
         exhaustedCounters: findExhaustedCounters({
@@ -436,7 +436,7 @@ export class UsageLimitQuotaService {
         consumedValues,
       });
 
-      const [blockingCounter] = filterExhaustedCountersByPayer({
+      const [blockingCounter] = findBlockingCounters({
         counters,
         consumedValues,
         exhaustedCounters,

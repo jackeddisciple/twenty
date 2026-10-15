@@ -10,7 +10,7 @@ const PRIORITY_BY_KIND: Record<QuotaCounter['kind'], number> = {
   limit: 2,
 };
 
-export const filterExhaustedCountersByPayer = ({
+export const findBlockingCounters = ({
   counters,
   consumedValues,
   exhaustedCounters,
@@ -26,7 +26,7 @@ export const filterExhaustedCountersByPayer = ({
     counter.kind === 'userAllowance' ? [index] : [],
   );
 
-  const isUserPaying =
+  const isSpendingUserCredits =
     userAllowanceIndexes.length > 0 &&
     userAllowanceIndexes.every((index) => isDefined(consumedValues[index])) &&
     (isStopMode ||
@@ -40,7 +40,7 @@ export const filterExhaustedCountersByPayer = ({
 
       return counter.kind === 'workspaceAllowance' ||
         isWorkspaceCreditLimitCounter(counter)
-        ? !isUserPaying
+        ? !isSpendingUserCredits
         : true;
     })
     .sort(
